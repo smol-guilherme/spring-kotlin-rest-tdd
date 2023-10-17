@@ -1,5 +1,6 @@
 package dio.spring_kotlin_rest_tdd.service
 
+import dio.spring_kotlin_rest_tdd.exception.BusinessException
 import dio.spring_kotlin_rest_tdd.factory.CustomerFixture
 import dio.spring_kotlin_rest_tdd.model.Customer
 import dio.spring_kotlin_rest_tdd.repository.CustomerRepository
@@ -8,6 +9,8 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -23,7 +26,7 @@ class CustomerServiceTest {
   @InjectMockKs lateinit var service: CustomerServiceImplementation
 
   @Test
-  fun `when Insert New Customer, then Success`() {
+  fun `when Insert New Customer, then Succeeds`() {
     val factoredCustomer = CustomerFixture.create()
     every { customers.save(any()) } returns factoredCustomer
 
@@ -44,6 +47,30 @@ class CustomerServiceTest {
     Assertions.assertThat(result).isExactlyInstanceOf(Customer::class.java)
     Assertions.assertThat(result).isSameAs(factoredCustomer)
     verify(exactly = 1) { customers.findById(randomId) }
+  }
+
+  @Test
+  fun `when Search for Customer, then Throw an Exception`() {
+    val randomId = Random.nextLong(0, 99999)
+    every { customers.findById(randomId) } returns Optional.empty()
+
+    Assertions.assertThatExceptionOfType(BusinessException::class.java)
+      .isThrownBy { service.findById(randomId) }
+      .withMessage("No user $randomId found")
+    verify(exactly = 1) { customers.findById(randomId) }
+  }
+
+  @Test
+  fun `when Delete Customer, then Succeeds`() {
+    val randomId = Random.nextLong(0, 99999)
+    val factoredCustomer = CustomerFixture.create(randomId)
+    every { customers.findById(randomId) } returns Optional.of(factoredCustomer)
+    every { customers.delete(factoredCustomer) } just runs
+
+    service.delete(randomId)
+
+    verify(exactly = 1) { customers.findById(randomId) }
+    verify(exactly = 1) { customers.delete(factoredCustomer) }
   }
 
   @Test

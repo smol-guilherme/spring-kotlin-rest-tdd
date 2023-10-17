@@ -32,6 +32,7 @@ class CustomerServiceImplementation(
   }
 
   override fun delete(id: Long) {
-    TODO("Not yet implemented")
+    val customer = this.findById(id)
+    repository.delete(customer)
   }
 }
