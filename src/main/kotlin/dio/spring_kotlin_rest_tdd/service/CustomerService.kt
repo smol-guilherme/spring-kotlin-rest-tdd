@@ -5,8 +5,6 @@ import java.util.*
 
 interface CustomerService {
 
-  fun findAll(): Iterable<Customer>
-
   fun findById(id: Long): Customer
 
   fun save(cst: Customer): Customer

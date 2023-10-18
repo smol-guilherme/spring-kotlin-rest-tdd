@@ -15,9 +15,6 @@ import kotlin.NoSuchElementException
 class CustomerServiceImplementation(
   private val repository: CustomerRepository
 ): CustomerService {
-  override fun findAll(): Iterable<Customer> {
-    TODO("Not yet implemented")
-  }
 
   override fun findById(id: Long): Customer {
     return repository.findById(id).orElseThrow { throw BusinessException("No user $id found") }
