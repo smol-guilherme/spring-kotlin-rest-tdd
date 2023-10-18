@@ -1,7 +1,9 @@
 package dio.spring_kotlin_rest_tdd.service
 
 import dio.spring_kotlin_rest_tdd.exception.BusinessException
+import dio.spring_kotlin_rest_tdd.factory.AddressFixture
 import dio.spring_kotlin_rest_tdd.factory.CustomerFixture
+import dio.spring_kotlin_rest_tdd.model.Address
 import dio.spring_kotlin_rest_tdd.model.Customer
 import dio.spring_kotlin_rest_tdd.repository.CustomerRepository
 import dio.spring_kotlin_rest_tdd.service.impl.CustomerServiceImplementation
@@ -27,7 +29,7 @@ class CustomerServiceTest {
 
   @Test
   fun `when Insert New Customer, then Succeeds`() {
-    val factoredCustomer = CustomerFixture.create()
+    val factoredCustomer = CustomerFixture.create(address = AddressFixture.address("97000000"))
     every { customers.save(any()) } returns factoredCustomer
 
     val result = service.save(factoredCustomer)
@@ -39,7 +41,7 @@ class CustomerServiceTest {
   @Test
   fun `when Search for Customer, then Returns Customer`() {
     val randomId = Random.nextLong(0, 99999)
-    val factoredCustomer = CustomerFixture.create(randomId)
+    val factoredCustomer = CustomerFixture.create(randomId, address = AddressFixture.address("97000000"))
     every { customers.findById(randomId) } returns Optional.of(factoredCustomer)
     val result = service.findById(randomId)
 
@@ -63,7 +65,7 @@ class CustomerServiceTest {
   @Test
   fun `when Delete Customer, then Succeeds`() {
     val randomId = Random.nextLong(0, 99999)
-    val factoredCustomer = CustomerFixture.create(randomId)
+    val factoredCustomer = CustomerFixture.create(randomId, address = AddressFixture.address("97000000"))
     every { customers.findById(randomId) } returns Optional.of(factoredCustomer)
     every { customers.delete(factoredCustomer) } just runs
 

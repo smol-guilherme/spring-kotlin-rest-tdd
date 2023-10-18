@@ -7,14 +7,13 @@ class AddressFixture {
 
   companion object {
     fun address(
-      cep: String,
-      streetAddress: String?,
-      @Nullable
-      complement: String?,
-      number: String?,
-      neighborhood: String?,
-      city: String?,
-      state: String?,
+      cep: String = "",
+      streetAddress: String? = "",
+      complement: String? = "",
+      number: String? = "",
+      neighborhood: String? = "",
+      city: String? = "",
+      state: String? = "",
       ibge: String? = "",
       gia: String? = "",
       ddd: String? = "",
