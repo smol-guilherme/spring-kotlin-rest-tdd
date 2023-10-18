@@ -11,8 +11,8 @@ data class Customer(
   val id: Long,
   var firstName: String,
   var lastName: String,
-  val cpf: CPF,
-  var email: Email,
+  val cpf: String,
+  var email: String,
   var cep: String,
   var address: Address
 )

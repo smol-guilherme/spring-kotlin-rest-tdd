@@ -13,8 +13,8 @@ class CustomerFixture {
       id: Long = Random.nextLong(0, 99999),
       firstName: String = "Albert",
       lastName: String = "da Silva",
-      cpf: CPF = "01725835985" as CPF,
-      email: Email = "${firstName.lowercase()}@email.com" as Email,
+      cpf: String = "12345678935",
+      email: String = "${firstName.lowercase()}@email.com",
       cep: String = "95000000",
       address: Address
     ): Customer {
