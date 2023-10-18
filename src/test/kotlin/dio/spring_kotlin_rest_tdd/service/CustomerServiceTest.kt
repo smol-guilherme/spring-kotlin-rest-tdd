@@ -3,7 +3,6 @@ package dio.spring_kotlin_rest_tdd.service
 import dio.spring_kotlin_rest_tdd.exception.BusinessException
 import dio.spring_kotlin_rest_tdd.factory.AddressFixture
 import dio.spring_kotlin_rest_tdd.factory.CustomerFixture
-import dio.spring_kotlin_rest_tdd.model.Address
 import dio.spring_kotlin_rest_tdd.model.Customer
 import dio.spring_kotlin_rest_tdd.repository.CustomerRepository
 import dio.spring_kotlin_rest_tdd.service.impl.CustomerServiceImplementation
