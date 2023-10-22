@@ -11,7 +11,7 @@ data class Customer(
   val id: Long,
   var firstName: String,
   var lastName: String,
-  var income: Int,
+  var income: Int = 100000,
   val cpf: String,
   var email: String,
   var cep: String,
