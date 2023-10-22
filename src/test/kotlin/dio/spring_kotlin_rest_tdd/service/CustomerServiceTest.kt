@@ -4,8 +4,11 @@ import dio.spring_kotlin_rest_tdd.exception.BusinessException
 import dio.spring_kotlin_rest_tdd.factory.AddressFixture
 import dio.spring_kotlin_rest_tdd.factory.CustomerFixture
 import dio.spring_kotlin_rest_tdd.model.Customer
+import dio.spring_kotlin_rest_tdd.repository.AddressRepository
 import dio.spring_kotlin_rest_tdd.repository.CustomerRepository
 import dio.spring_kotlin_rest_tdd.service.impl.CustomerServiceImplementation
+import feign.FeignException
+import feign.Request
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -15,14 +18,18 @@ import io.mockk.runs
 import io.mockk.verify
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.context.ActiveProfiles
+import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.random.Random
 
 @ActiveProfiles("test")
 @ExtendWith(MockKExtension::class)
 class CustomerServiceTest {
+  @MockK lateinit var address: AddressRepository
+  @MockK lateinit var viaCep: ViaCepService
   @MockK lateinit var customers: CustomerRepository
   @InjectMockKs lateinit var service: CustomerServiceImplementation
 
@@ -51,7 +58,29 @@ class CustomerServiceTest {
   }
 
   @Test
-  fun `when Search for Customer, then Throw an Exception`() {
+  fun `when Client is Insert With Invalid Address, then Throws an Exception`() {
+    //    Request object below taken from OpenFeign tests on GitHub and refactored to Kotlin
+    val request = Request.create(
+      Request.HttpMethod.GET,
+      "/home",
+      emptyMap(),
+      "data".toByteArray(StandardCharsets.UTF_16BE),
+      StandardCharsets.UTF_16BE,
+      null
+    )
+    //    mockkConstructor(FeignException.BadRequest::class) does not solve the issue I was having
+    val exception = FeignException.BadRequest("Bad request", request, request.body(), request.headers())
+    val randomCep = Random.nextInt(90000000, 99999999).toString()
+
+    every { address.findById(randomCep) } returns Optional.empty()
+    every { viaCep.enquiryCep(randomCep) } throws exception
+
+    Assertions.assertThatExceptionOfType(FeignException::class.java)
+    // add other test parameters 'is thrown by, etc...'
+  }
+
+  @Test
+  fun `when Search for Customer, then Throws an Exception`() {
     val randomId = Random.nextLong(0, 99999)
     every { customers.findById(randomId) } returns Optional.empty()
 
@@ -78,5 +107,4 @@ class CustomerServiceTest {
   fun `when X then Y`() {
     TODO()
   }
-
 }
