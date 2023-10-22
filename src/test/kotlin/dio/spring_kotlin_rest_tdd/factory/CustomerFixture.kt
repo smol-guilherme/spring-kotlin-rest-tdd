@@ -16,9 +16,10 @@ class CustomerFixture {
       cpf: String = "12345678935",
       email: String = "${firstName.lowercase()}@email.com",
       cep: String = "95000000",
+      income: Int = 100000,
       address: Address
     ): Customer {
-      return Customer(id = id, firstName = firstName, lastName = lastName, cpf = cpf, email = email, cep = cep, address = address)
+      return Customer(id = id, firstName = firstName, lastName = lastName, cpf = cpf, email = email, cep = cep, address = address, income = income)
     }
   }
 }
