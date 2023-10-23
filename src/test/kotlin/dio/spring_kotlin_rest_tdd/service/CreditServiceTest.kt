@@ -2,8 +2,8 @@ package dio.spring_kotlin_rest_tdd.service
 
 import dio.spring_kotlin_rest_tdd.factory.AddressFixture
 import dio.spring_kotlin_rest_tdd.factory.CreditFixture
+import dio.spring_kotlin_rest_tdd.factory.CreditRequestFixture
 import dio.spring_kotlin_rest_tdd.factory.CustomerFixture
-import dio.spring_kotlin_rest_tdd.repository.AddressRepository
 import dio.spring_kotlin_rest_tdd.repository.CreditRepository
 import dio.spring_kotlin_rest_tdd.service.impl.CreditServiceImplementation
 import io.mockk.every
@@ -27,21 +27,24 @@ class CreditServiceTest {
 
   @Test
   fun `when Register a new Credit Option, then Returns Success`() {
-    val factoredCredit = CreditFixture.create(
-      dayOfFirstInstallment = LocalDate.now().plusDays(Random.nextLong(1,90)),
-      numberOfInstallments = Random.nextInt(1,48))
     val factoredCustomer = CustomerFixture.create(address = AddressFixture.address("97000000"))
-
-    every { credit.save(any()) } returns factoredCredit
-    val result = service.requestOne(
-      creditValue = factoredCredit.creditValue,
-      dayOfFirstInstallment = factoredCredit.dayOfFirstInstallment,
-      numberOfInstallments = factoredCredit.numberOfInstallments,
+    val factoredCreditRequest = CreditRequestFixture.create(
+      dayOfFirstInstallment = LocalDate.now().plusDays(Random.nextLong(1,90)),
+      numberOfInstallments = Random.nextInt(1,48),
       customerId = factoredCustomer.id
     )
+    val factoredCredit = CreditFixture.create(
+      customerId = factoredCreditRequest.customerId,
+      dayOfFirstInstallment = factoredCreditRequest.dayOfFirstInstallment,
+      numberOfInstallments = factoredCreditRequest.numberOfInstallments,
+      )
+
+    every { credit.save(any()) } returns factoredCredit
+    val result = service.requestOne(factoredCreditRequest)
 
     Assertions.assertThat(result).isNotNull()
     Assertions.assertThat(result).isEqualTo(factoredCredit)
+    // mudar aqui quando alterar a saída
   }
   @Test
   fun `when X then Y`() {
