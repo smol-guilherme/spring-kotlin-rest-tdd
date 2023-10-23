@@ -1,5 +1,6 @@
 package dio.spring_kotlin_rest_tdd.service
 
+import dio.spring_kotlin_rest_tdd.exception.BusinessException
 import dio.spring_kotlin_rest_tdd.factory.AddressFixture
 import dio.spring_kotlin_rest_tdd.factory.CreditFixture
 import dio.spring_kotlin_rest_tdd.factory.CreditRequestFixture
@@ -11,6 +12,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -51,6 +53,21 @@ class CreditServiceTest {
     Assertions.assertThat(result).isEqualTo("Done Deal")
     // mudar aqui quando alterar a saída
   }
+
+  @Test
+  fun `when Register a new Credit Option with too many Installments, then Throws an Exception`() {
+    val factoredCustomer = CustomerFixture.create(address = AddressFixture.address("97000000"))
+    val factoredCreditRequest = CreditRequestFixture.create(
+      dayOfFirstInstallment = LocalDate.now().plusDays(Random.nextLong(1,90)),
+      numberOfInstallments = Random.nextInt(49, 100),
+      customerId = factoredCustomer.id
+    )
+
+    Assertions.assertThatExceptionOfType(BusinessException::class.java)
+      .isThrownBy { service.validate(factoredCreditRequest) }
+      .withMessage("feelsbadman")
+  }
+
   @Test
   fun `when X then Y`() {
     TODO()
