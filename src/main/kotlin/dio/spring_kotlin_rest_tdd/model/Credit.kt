@@ -11,7 +11,7 @@ data class Credit(
   var status: Status = Status.IN_PROGRESS,
   val dayOfFirstInstallment: LocalDate = LocalDate.now().plusDays(1),
   val numberOfInstallments: Int = 0,
-  val value: Long,
+  val creditValue: Long,
   @ManyToOne
-  val customer: Customer? = null,
+  val customerId: Long? = null,
   ) {}
