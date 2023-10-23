@@ -14,10 +14,17 @@ class CreditFixture {
       status: DataTypes.Status = DataTypes.Status.IN_PROGRESS,
       dayOfFirstInstallment: LocalDate = LocalDate.now().plusDays(1),
       numberOfInstallments: Int = 0,
-      value: Long = 1000000,
-      customer: Customer? = null,
+      creditValue: Long = 1000000,
+      customerId: Customer? = null,
     ): Credit {
-      return Credit(id, status = status, dayOfFirstInstallment = dayOfFirstInstallment, numberOfInstallments = numberOfInstallments, value = value)
+      return Credit(
+        id,
+        status = status,
+        dayOfFirstInstallment = dayOfFirstInstallment,
+        numberOfInstallments = numberOfInstallments,
+        creditValue = creditValue,
+        customerId = customerId
+      )
     }
   }
 }
