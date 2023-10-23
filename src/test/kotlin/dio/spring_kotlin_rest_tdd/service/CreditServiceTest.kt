@@ -5,6 +5,7 @@ import dio.spring_kotlin_rest_tdd.factory.CreditFixture
 import dio.spring_kotlin_rest_tdd.factory.CreditRequestFixture
 import dio.spring_kotlin_rest_tdd.factory.CustomerFixture
 import dio.spring_kotlin_rest_tdd.repository.CreditRepository
+import dio.spring_kotlin_rest_tdd.repository.CustomerRepository
 import dio.spring_kotlin_rest_tdd.service.impl.CreditServiceImplementation
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -15,11 +16,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDate
+import java.util.*
 import kotlin.random.Random
 
 @ActiveProfiles("test")
 @ExtendWith(MockKExtension::class)
 class CreditServiceTest {
+  @MockK
+  lateinit var customer: CustomerRepository
   @MockK
   lateinit var credit: CreditRepository
   @InjectMockKs
@@ -40,10 +44,11 @@ class CreditServiceTest {
       )
 
     every { credit.save(any()) } returns factoredCredit
+    every { customer.findById(any<Long>()) } returns Optional.of(factoredCustomer)
     val result = service.requestOne(factoredCreditRequest)
 
     Assertions.assertThat(result).isNotNull()
-    Assertions.assertThat(result).isEqualTo(factoredCredit)
+    Assertions.assertThat(result).isEqualTo("Done Deal")
     // mudar aqui quando alterar a saída
   }
   @Test
