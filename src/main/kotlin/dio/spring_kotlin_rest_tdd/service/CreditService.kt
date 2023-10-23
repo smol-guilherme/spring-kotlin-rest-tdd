@@ -1,15 +1,16 @@
 package dio.spring_kotlin_rest_tdd.service
 
 import dio.spring_kotlin_rest_tdd.dto.CreditDto
+import dio.spring_kotlin_rest_tdd.dto.response.CreditListDto
+import dio.spring_kotlin_rest_tdd.dto.response.CustomerCreditDto
 import dio.spring_kotlin_rest_tdd.model.Credit
-import java.time.LocalDate
 import java.util.Optional
 
 interface CreditService {
 
-  fun listAll(): Iterable<Credit>
+  fun listAllFromCustomer(customerId: Long): Iterable<CreditListDto>
 
-  fun listOne(id: Long): Optional<Credit>
+  fun listOne(creditId: Long, customerId: Long): Optional<CustomerCreditDto>
 
   fun requestOne(creditDto: CreditDto): String
 }

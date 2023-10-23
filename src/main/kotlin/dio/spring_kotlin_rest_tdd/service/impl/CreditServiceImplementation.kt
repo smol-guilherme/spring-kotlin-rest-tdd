@@ -1,12 +1,13 @@
 package dio.spring_kotlin_rest_tdd.service.impl
 
 import dio.spring_kotlin_rest_tdd.dto.CreditDto
+import dio.spring_kotlin_rest_tdd.dto.response.CreditListDto
+import dio.spring_kotlin_rest_tdd.dto.response.CustomerCreditDto
 import dio.spring_kotlin_rest_tdd.exception.BusinessException
 import dio.spring_kotlin_rest_tdd.model.Credit
 import dio.spring_kotlin_rest_tdd.repository.CreditRepository
 import dio.spring_kotlin_rest_tdd.repository.CustomerRepository
 import dio.spring_kotlin_rest_tdd.service.CreditService
-import java.lang.IllegalArgumentException
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.util.*
@@ -30,11 +31,11 @@ class CreditServiceImplementation(
     return "Done Deal"
   }
 
-  override fun listAll(): Iterable<Credit> {
+  override fun listAllFromCustomer(customerId: Long): Iterable<CreditListDto> {
     TODO("Not yet implemented")
   }
 
-  override fun listOne(id: Long): Optional<Credit> {
+  override fun listOne(creditId: Long, customerId: Long): Optional<CustomerCreditDto> {
     TODO("Not yet implemented")
   }
 
