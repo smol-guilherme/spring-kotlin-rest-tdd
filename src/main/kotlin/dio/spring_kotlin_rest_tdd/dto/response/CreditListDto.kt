@@ -6,6 +6,5 @@ class CreditListDto(
   val customerId: Long,
   val creditValue: Long,
   val numberOfInstallments: Int,
-  val status: DataTypes.Status = DataTypes.Status.IN_PROGRESS
 ) {
 }

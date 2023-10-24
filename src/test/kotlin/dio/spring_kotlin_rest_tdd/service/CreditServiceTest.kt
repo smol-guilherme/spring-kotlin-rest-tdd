@@ -112,13 +112,11 @@ class CreditServiceTest {
   @Test
   fun `when Request a List of the Customers Credit, then Returns Success`() {
     val factoredCustomer = CustomerFixture.create(address = AddressFixture.address("97000000"))
-    val status = DataTypes.Status.values()
     val factoredList: Iterable<CreditListDto> = (1 .. Random.nextInt(3,5)).map {
       CreditListFixture.create(
         numberOfInstallments = Random.nextInt(1, 48),
         customerId = factoredCustomer.id,
         creditValue = Random.nextLong(100000, 200000),
-        status = status[Random.nextInt(DataTypes.Status.values().size)],
       )
     }
 
