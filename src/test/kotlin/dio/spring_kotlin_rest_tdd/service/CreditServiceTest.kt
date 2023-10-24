@@ -1,10 +1,8 @@
 package dio.spring_kotlin_rest_tdd.service
 
 import dio.spring_kotlin_rest_tdd.exception.BusinessException
-import dio.spring_kotlin_rest_tdd.factory.AddressFixture
-import dio.spring_kotlin_rest_tdd.factory.CreditFixture
-import dio.spring_kotlin_rest_tdd.factory.CreditRequestFixture
-import dio.spring_kotlin_rest_tdd.factory.CustomerFixture
+import dio.spring_kotlin_rest_tdd.factory.*
+import dio.spring_kotlin_rest_tdd.model.type.DataTypes
 import dio.spring_kotlin_rest_tdd.repository.CreditRepository
 import dio.spring_kotlin_rest_tdd.repository.CustomerRepository
 import dio.spring_kotlin_rest_tdd.service.impl.CreditServiceImplementation
@@ -66,6 +64,28 @@ class CreditServiceTest {
     Assertions.assertThatExceptionOfType(BusinessException::class.java)
       .isThrownBy { service.validate(factoredCreditRequest) }
       .withMessage("feelsbadman")
+    // mudar essa mensagem jesus por favor
+  }
+
+  @Test
+  fun `when Search for a Customers Credit Options, then Returns Success`() {
+    val factoredCustomer = CustomerFixture.create(address = AddressFixture.address("97000000"))
+    val factoredCredit = CustomerCreditFixture.create(
+      numberOfInstallments = Random.nextInt(1, 48),
+      customerId = factoredCustomer.id,
+      creditValue = Random.nextLong(100000, 200000),
+      status = DataTypes.Status.APPROVED,
+      customerIncome = factoredCustomer.income,
+      customerEmail = factoredCustomer.email
+    )
+
+    every { credit.findOneByCustomerIdAndCreditId(any(), any()) } returns Optional.of(factoredCredit)
+    every { customer.findById(any<Long>()) } returns Optional.of(factoredCustomer)
+    val result = service.listOne(factoredCredit.creditId, factoredCustomer.id)
+
+    Assertions.assertThat(result).isNotNull()
+    Assertions.assertThat(result).isEqualTo(Optional.of(factoredCredit))
+    verify(exactly = 1) { credit.findOneByCustomerIdAndCreditId(factoredCredit.creditId, factoredCustomer.id) }
   }
 
   @Test

@@ -1,29 +1,30 @@
 package dio.spring_kotlin_rest_tdd.factory
 
-import dio.spring_kotlin_rest_tdd.model.Credit
+import dio.spring_kotlin_rest_tdd.dto.response.CustomerCreditDto
 import dio.spring_kotlin_rest_tdd.model.type.DataTypes
-import java.time.LocalDate
-import java.util.UUID
-import kotlin.random.Random
+import jakarta.validation.constraints.Email
+import java.util.*
 
-class CreditFixture {
+class CustomerCreditFixture {
 
   companion object {
     fun create(
       id: UUID = UUID.randomUUID(),
-      dayOfFirstInstallment: LocalDate = LocalDate.now().plusDays(1),
       status: DataTypes.Status = DataTypes.Status.IN_PROGRESS,
       numberOfInstallments: Int = 0,
       creditValue: Long = 1000000,
-      customerId: Long?,
-    ): Credit {
-      return Credit(
+      customerId: Long,
+      customerEmail: String,
+      customerIncome: Long = 100000
+    ): CustomerCreditDto {
+      return CustomerCreditDto(
         id,
         customerId = customerId,
-        dayOfFirstInstallment = dayOfFirstInstallment,
         numberOfInstallments = numberOfInstallments,
         creditValue = creditValue,
-        status = status
+        status = status,
+        customerEmail = customerEmail,
+        customerIncome = customerIncome
       )
     }
   }
