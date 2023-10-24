@@ -1,4 +1,4 @@
-package dio.spring_kotlin_rest_tdd.factory
+package dio.spring_kotlin_rest_tdd.factory.credit
 
 import dio.spring_kotlin_rest_tdd.dto.response.CustomerCreditDto
 import dio.spring_kotlin_rest_tdd.model.type.DataTypes

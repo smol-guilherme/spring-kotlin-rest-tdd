@@ -1,4 +1,4 @@
-package dio.spring_kotlin_rest_tdd.factory
+package dio.spring_kotlin_rest_tdd.factory.customer
 
 import dio.spring_kotlin_rest_tdd.model.Address
 import jakarta.annotation.Nullable

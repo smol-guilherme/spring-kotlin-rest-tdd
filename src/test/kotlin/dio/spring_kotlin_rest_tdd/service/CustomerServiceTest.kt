@@ -1,8 +1,8 @@
 package dio.spring_kotlin_rest_tdd.service
 
 import dio.spring_kotlin_rest_tdd.exception.BusinessException
-import dio.spring_kotlin_rest_tdd.factory.AddressFixture
-import dio.spring_kotlin_rest_tdd.factory.CustomerFixture
+import dio.spring_kotlin_rest_tdd.factory.customer.AddressFixture
+import dio.spring_kotlin_rest_tdd.factory.customer.CustomerFixture
 import dio.spring_kotlin_rest_tdd.model.Customer
 import dio.spring_kotlin_rest_tdd.repository.AddressRepository
 import dio.spring_kotlin_rest_tdd.repository.CustomerRepository
@@ -18,7 +18,6 @@ import io.mockk.runs
 import io.mockk.verify
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.context.ActiveProfiles
 import java.nio.charset.StandardCharsets

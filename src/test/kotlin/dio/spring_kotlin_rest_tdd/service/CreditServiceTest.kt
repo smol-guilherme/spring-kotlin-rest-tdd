@@ -1,7 +1,15 @@
 package dio.spring_kotlin_rest_tdd.service
 
+import dio.spring_kotlin_rest_tdd.dto.response.CreditListDto
 import dio.spring_kotlin_rest_tdd.exception.BusinessException
 import dio.spring_kotlin_rest_tdd.factory.*
+import dio.spring_kotlin_rest_tdd.factory.credit.CreditFixture
+import dio.spring_kotlin_rest_tdd.factory.credit.CreditListFixture
+import dio.spring_kotlin_rest_tdd.factory.credit.CreditRequestFixture
+import dio.spring_kotlin_rest_tdd.factory.credit.CustomerCreditFixture
+import dio.spring_kotlin_rest_tdd.factory.customer.AddressFixture
+import dio.spring_kotlin_rest_tdd.factory.customer.CustomerFixture
+import dio.spring_kotlin_rest_tdd.model.Credit
 import dio.spring_kotlin_rest_tdd.model.type.DataTypes
 import dio.spring_kotlin_rest_tdd.repository.CreditRepository
 import dio.spring_kotlin_rest_tdd.repository.CustomerRepository
@@ -102,7 +110,31 @@ class CreditServiceTest {
   }
 
   @Test
+  fun `when Request a List of the Customers Credit, then Returns Success`() {
+    val factoredCustomer = CustomerFixture.create(address = AddressFixture.address("97000000"))
+    val status = DataTypes.Status.values()
+    val factoredList: Iterable<CreditListDto> = (1 .. Random.nextInt(3,5)).map {
+      CreditListFixture.create(
+        numberOfInstallments = Random.nextInt(1, 48),
+        customerId = factoredCustomer.id,
+        creditValue = Random.nextLong(100000, 200000),
+        status = status[Random.nextInt(DataTypes.Status.values().size)],
+      )
+    }
+
+    every { credit.findAllByCustomerId(any()) } returns factoredList
+    every { customer.findById(any<Long>()) } returns Optional.of(factoredCustomer)
+
+    val result = service.listAllFromCustomer(factoredCustomer.id)
+
+    Assertions.assertThat(result).isNotNull()
+    Assertions.assertThat(result).isEqualTo(factoredList)
+    verify(exactly = 1) { credit.findAllByCustomerId(factoredCustomer.id) }
+  }
+
+  @Test
   fun `when X then Y`() {
     TODO()
+
   }
 }
