@@ -48,8 +48,8 @@ class CreditServiceTest {
     val result = service.requestOne(factoredCreditRequest)
 
     Assertions.assertThat(result).isNotNull()
-    Assertions.assertThat(result).isEqualTo("Done Deal")
-    // mudar aqui quando alterar a saída
+    Assertions.assertThat(result).isEqualTo("Your Credit was requested successfully.\n" +
+        "Refer to ID ${factoredCredit.id} to verify the approval status.")
   }
 
   @Test
@@ -63,8 +63,8 @@ class CreditServiceTest {
 
     Assertions.assertThatExceptionOfType(BusinessException::class.java)
       .isThrownBy { service.validate(factoredCreditRequest) }
-      .withMessage("feelsbadman")
-    // mudar essa mensagem jesus por favor
+      .withMessage("Number of installments must be at most 48\n" +
+          "${factoredCreditRequest.numberOfInstallments} was provided")
   }
 
   @Test
@@ -86,6 +86,19 @@ class CreditServiceTest {
     Assertions.assertThat(result).isNotNull()
     Assertions.assertThat(result).isEqualTo(Optional.of(factoredCredit))
     verify(exactly = 1) { credit.findOneByCustomerIdAndCreditId(factoredCredit.creditId, factoredCustomer.id) }
+  }
+
+  @Test
+  fun `when Search for a Invalid Customers Credit Options, then Throw an Error`() {
+    val factoredCustomer = CustomerFixture.create(address = AddressFixture.address("97000000"))
+    val randomUUID = UUID.randomUUID()
+
+    every { credit.findById(randomUUID) } returns Optional.empty()
+    every { customer.findById(any<Long>()) } returns Optional.of(factoredCustomer)
+
+    Assertions.assertThatExceptionOfType(BusinessException::class.java)
+      .isThrownBy { service.validate(randomUUID) }
+      .withMessage("No Credit found for signature: $randomUUID")
   }
 
   @Test
