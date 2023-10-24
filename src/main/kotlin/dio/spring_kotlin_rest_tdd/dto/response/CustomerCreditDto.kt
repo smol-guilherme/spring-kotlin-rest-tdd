@@ -1,14 +1,17 @@
 package dio.spring_kotlin_rest_tdd.dto.response
 
-import jakarta.validation.constraints.Email
 import dio.spring_kotlin_rest_tdd.model.type.DataTypes.Status
+import jakarta.validation.constraints.Email
+import java.util.*
 
 data class CustomerCreditDto(
+  val creditId: UUID,
   val customerId: Long,
   val creditValue: Long,
   val status: Status,
   val numberOfInstallments: Int,
-  val customerEmail: Email,
+  @Email
+  val customerEmail: String,
   val customerIncome: Long
 ) {
 }

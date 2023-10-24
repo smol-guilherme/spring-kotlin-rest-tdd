@@ -31,19 +31,38 @@ class CreditServiceImplementation(
     return "Done Deal"
   }
 
+  override fun listOne(creditId: UUID, customerId: Long): Optional<CustomerCreditDto> {
+    validate(customerId)
+    return repository.findOneByCustomerIdAndCreditId(creditId, customerId)
+  }
+
   override fun listAllFromCustomer(customerId: Long): Iterable<CreditListDto> {
-    TODO("Not yet implemented")
+    TODO()
   }
 
-  override fun listOne(creditId: Long, customerId: Long): Optional<CustomerCreditDto> {
-    TODO("Not yet implemented")
-  }
-
-  internal fun validate(data: CreditDto): Boolean {
-    if(data.dayOfFirstInstallment > LocalDate.now().plusDays(91)) throw BusinessException("bottomtext")
-    if(data.creditValue < 0) throw BusinessException("waytoodank")
-    if(data.numberOfInstallments !in 1..48) throw BusinessException("feelsbadman")
-    if(customers.findById(data.customerId).isEmpty) throw BusinessException("whosthere")
-    return true
+  internal fun <T> validate(data: T) {
+    when (data) {
+      is Long -> {
+        if(customers.findById(data).isEmpty) throw BusinessException("No Customer found for ID: $data")
+        return
+      }
+      is UUID -> {
+        if(repository.findById(data).isEmpty) throw BusinessException("No Credit found for signature: $data")
+      }
+      is CreditDto -> {
+        if(data.dayOfFirstInstallment > LocalDate.now().plusDays(91)) {
+          throw BusinessException("First installment must be at most 90 days prior to the current date")
+        }
+        if(data.creditValue < 0) {
+          throw BusinessException("Credit must be a positive number\n ${data.creditValue} was provided")
+        }
+        if(data.numberOfInstallments !in 1..48) {
+          throw BusinessException("Number of installments must be at most 48\n${data.numberOfInstallments} was provided")
+        }
+        if(customers.findById(data.customerId).isEmpty) {
+          throw BusinessException("No Customer found for ID: $data")
+        }
+      }
+    }
   }
 }
