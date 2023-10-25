@@ -27,17 +27,19 @@ class CreditServiceImplementation(
       numberOfInstallments = params.numberOfInstallments,
       creditValue = params.creditValue
     )
-    repository.save(dtoToObject)
-    return "Done Deal"
+    val request = repository.save(dtoToObject)
+    return "Your Credit was requested successfully.\nRefer to ID ${request.id} to verify the approval status."
   }
 
   override fun listOne(creditId: UUID, customerId: Long): Optional<CustomerCreditDto> {
     validate(customerId)
+    validate(creditId)
     return repository.findOneByCustomerIdAndCreditId(creditId, customerId)
   }
 
   override fun listAllFromCustomer(customerId: Long): Iterable<CreditListDto> {
-    TODO()
+    validate(customerId)
+    return repository.findAllByCustomerId(customerId)
   }
 
   internal fun <T> validate(data: T) {

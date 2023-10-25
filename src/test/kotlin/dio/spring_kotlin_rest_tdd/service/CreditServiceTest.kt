@@ -94,7 +94,6 @@ class CreditServiceTest {
       customerId = factoredCustomer.id
     )
 
-
     every { credit.findOneByCustomerIdAndCreditId(any(), any()) } returns Optional.of(factoredCustomerCredit)
     every { credit.findById(any()) } returns Optional.of(factoredCredit)
     every { customer.findById(any<Long>()) } returns Optional.of(factoredCustomer)
