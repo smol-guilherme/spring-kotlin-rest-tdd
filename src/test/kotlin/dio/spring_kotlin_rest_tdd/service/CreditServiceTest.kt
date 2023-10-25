@@ -105,7 +105,7 @@ class CreditServiceTest {
   }
 
   @Test
-  fun `when Search for an Invalid Customers Credit Options, then Throw an Error`() {
+  fun `when Search for an Invalid Customers Credit Options, then Throws an Exception`() {
     val factoredCustomer = CustomerFixture.create(address = AddressFixture.address("97000000"))
     val randomUUID = UUID.randomUUID()
 
@@ -139,7 +139,7 @@ class CreditServiceTest {
   }
 
   @Test
-  fun `when Request a Credit List of an Invalid Customer, then Returns Throws an Error`() {
+  fun `when Request a Credit List of an Invalid Customer, then Throws an Exception`() {
     val randomId = Random.nextLong(0, 100000)
 
     every { customer.findById(randomId) } returns Optional.empty()
