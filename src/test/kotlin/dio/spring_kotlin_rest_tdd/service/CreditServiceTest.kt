@@ -78,7 +78,7 @@ class CreditServiceTest {
   @Test
   fun `when Search for a Customers Credit Options, then Returns Success`() {
     val factoredCustomer = CustomerFixture.create(address = AddressFixture.address("97000000"))
-    val factoredCredit = CustomerCreditFixture.create(
+    val factoredCustomerCredit = CustomerCreditFixture.create(
       numberOfInstallments = Random.nextInt(1, 48),
       customerId = factoredCustomer.id,
       creditValue = Random.nextLong(100000, 200000),
@@ -86,18 +86,27 @@ class CreditServiceTest {
       customerIncome = factoredCustomer.income,
       customerEmail = factoredCustomer.email
     )
+    val factoredCredit = CreditFixture.create(
+      id = factoredCustomerCredit.creditId,
+      numberOfInstallments = factoredCustomerCredit.numberOfInstallments,
+      creditValue = factoredCustomerCredit.creditValue,
+      status = DataTypes.Status.APPROVED,
+      customerId = factoredCustomer.id
+    )
 
-    every { credit.findOneByCustomerIdAndCreditId(any(), any()) } returns Optional.of(factoredCredit)
+
+    every { credit.findOneByCustomerIdAndCreditId(any(), any()) } returns Optional.of(factoredCustomerCredit)
+    every { credit.findById(any()) } returns Optional.of(factoredCredit)
     every { customer.findById(any<Long>()) } returns Optional.of(factoredCustomer)
-    val result = service.listOne(factoredCredit.creditId, factoredCustomer.id)
+    val result = service.listOne(factoredCustomerCredit.creditId, factoredCustomer.id)
 
     Assertions.assertThat(result).isNotNull()
-    Assertions.assertThat(result).isEqualTo(Optional.of(factoredCredit))
-    verify(exactly = 1) { credit.findOneByCustomerIdAndCreditId(factoredCredit.creditId, factoredCustomer.id) }
+    Assertions.assertThat(result).isEqualTo(Optional.of(factoredCustomerCredit))
+    verify(exactly = 1) { credit.findOneByCustomerIdAndCreditId(factoredCustomerCredit.creditId, factoredCustomer.id) }
   }
 
   @Test
-  fun `when Search for a Invalid Customers Credit Options, then Throw an Error`() {
+  fun `when Search for an Invalid Customers Credit Options, then Throw an Error`() {
     val factoredCustomer = CustomerFixture.create(address = AddressFixture.address("97000000"))
     val randomUUID = UUID.randomUUID()
 
@@ -131,8 +140,13 @@ class CreditServiceTest {
   }
 
   @Test
-  fun `when X then Y`() {
-    TODO()
+  fun `when Request a Credit List of an Invalid Customer, then Returns Throws an Error`() {
+    val randomId = Random.nextLong(0, 100000)
 
+    every { customer.findById(randomId) } returns Optional.empty()
+
+    Assertions.assertThatExceptionOfType(BusinessException::class.java)
+      .isThrownBy { service.validate(randomId) }
+      .withMessage("No Customer found for ID: $randomId")
   }
 }
