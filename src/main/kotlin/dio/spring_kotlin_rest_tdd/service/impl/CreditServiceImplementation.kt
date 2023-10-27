@@ -22,7 +22,7 @@ class CreditServiceImplementation(
   ): String {
     validate(params)
     val dtoToObject = Credit(
-      customerId = params.customerId,
+      customer = params.customerId,
       dayOfFirstInstallment = params.dayOfFirstInstallment,
       numberOfInstallments = params.numberOfInstallments,
       creditValue = params.creditValue
@@ -34,7 +34,7 @@ class CreditServiceImplementation(
   override fun listOne(creditId: UUID, customerId: Long): Optional<CustomerCreditDto> {
     validate(customerId)
     validate(creditId)
-    return repository.findOneByCustomerIdAndCreditId(creditId, customerId)
+    return repository.findOneByIdAndCustomerId(creditId, customerId)
   }
 
   override fun listAllFromCustomer(customerId: Long): Iterable<CreditListDto> {
@@ -61,7 +61,7 @@ class CreditServiceImplementation(
         if(data.numberOfInstallments !in 1..48) {
           throw BusinessException("Number of installments must be at most 48\n${data.numberOfInstallments} was provided")
         }
-        if(customers.findById(data.customerId).isEmpty) {
+        if(customers.findById(data.customerId.id!!).isEmpty) {
           throw BusinessException("No Customer found for ID: $data")
         }
       }
