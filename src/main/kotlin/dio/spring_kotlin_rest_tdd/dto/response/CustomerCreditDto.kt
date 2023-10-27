@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Email
 import java.util.*
 
 data class CustomerCreditDto(
-  val creditId: UUID,
+  val id: UUID,
   val customerId: Long,
   val creditValue: Long,
   val status: Status,

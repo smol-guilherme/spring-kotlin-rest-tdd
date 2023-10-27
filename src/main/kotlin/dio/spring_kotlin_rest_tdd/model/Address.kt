@@ -1,23 +1,23 @@
 package dio.spring_kotlin_rest_tdd.model
 
-import jakarta.annotation.Nullable
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 
 @Entity
 data class Address(
-  @Id
+  @Id @Column(nullable = false, unique = true)
   val cep: String,
-  val streetAddress: String?,
-  @Nullable
+  @Column val streetAddress: String?,
+  @Column(nullable = true)
   val complement: String?,
-  var number: String?,
-  val neighborhood: String?,
-  val city: String?,
-  val state: String?,
-  val ibge: String?,
-  val gia: String?,
-  val ddd: String?,
-  val siafi: String?
+  @Column var number: String?,
+  @Column val neighborhood: String?,
+  @Column val city: String?,
+  @Column val state: String?,
+  @Column val ibge: String?,
+  @Column val gia: String?,
+  @Column val ddd: String?,
+  @Column val siafi: String?
 ) {
 }

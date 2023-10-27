@@ -7,12 +7,12 @@ import java.util.*
 
 @Entity
 data class Credit(
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-  val id: UUID? = null,
-  var status: Status = Status.IN_PROGRESS,
-  val dayOfFirstInstallment: LocalDate = LocalDate.now().plusDays(1),
-  val numberOfInstallments: Int = 0,
-  val creditValue: Long,
+  @Id @GeneratedValue(strategy = GenerationType.UUID)
+  @Column val id: UUID? = null,
+  @Column var status: Status = Status.IN_PROGRESS,
+  @Column val dayOfFirstInstallment: LocalDate = LocalDate.now().plusDays(1),
+  @Column val numberOfInstallments: Int = 0,
+  @Column val creditValue: Long,
   @ManyToOne
-  val customerId: Long? = null,
+  val customer: Customer,
   ) {}
