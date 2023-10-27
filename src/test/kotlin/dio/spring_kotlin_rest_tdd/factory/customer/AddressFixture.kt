@@ -1,12 +1,11 @@
 package dio.spring_kotlin_rest_tdd.factory.customer
 
 import dio.spring_kotlin_rest_tdd.model.Address
-import jakarta.annotation.Nullable
 
 class AddressFixture {
 
   companion object {
-    fun address(
+    fun create(
       cep: String = "",
       streetAddress: String? = "",
       complement: String? = "",

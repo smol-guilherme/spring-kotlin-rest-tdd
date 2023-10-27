@@ -13,7 +13,7 @@ class CreditRequestFixture {
       dayOfFirstInstallment: LocalDate = LocalDate.now().plusDays(1),
       numberOfInstallments: Int = 0,
       creditValue: Long = 1000000,
-      customerId: Long? = null,
+      customerId: Customer? = null,
     ): CreditDto {
       return CreditDto(
         dayOfFirstInstallment = dayOfFirstInstallment,

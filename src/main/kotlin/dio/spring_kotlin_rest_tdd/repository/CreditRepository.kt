@@ -11,6 +11,6 @@ import java.util.*
 interface CreditRepository: JpaRepository<Credit, UUID> {
 
   fun findAllByCustomerId(customerId: Long): Iterable<CreditListDto>
-
-  fun findOneByCustomerIdAndCreditId(customerId: UUID, creditId: Long): Optional<CustomerCreditDto>
+  fun findOneByIdAndCustomerId(id: UUID, customerId: Long): Optional<CustomerCreditDto>
+  fun findOneById(id: UUID): Optional<Credit>
 }
