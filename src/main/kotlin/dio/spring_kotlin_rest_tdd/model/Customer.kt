@@ -1,5 +1,6 @@
 package dio.spring_kotlin_rest_tdd.model
 
+import dio.spring_kotlin_rest_tdd.dto.request.CustomerDto
 import jakarta.persistence.*
 import jakarta.validation.constraints.Email
 
@@ -21,4 +22,14 @@ data class Customer(
     mappedBy = "customer"
   )
   var credits: List<Credit> = mutableListOf(),
-)
+) {
+  constructor(data: CustomerDto, address: Address?) : this(
+    firstName = data.firstName,
+    lastName = data.lastName,
+    income = data.income,
+    cpf = data.cpf,
+    email = data.email,
+    cep = data.cep,
+    address = address!!,
+  )
+}
