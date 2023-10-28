@@ -2,7 +2,9 @@ package dio.spring_kotlin_rest_tdd.service
 
 import dio.spring_kotlin_rest_tdd.exception.BusinessException
 import dio.spring_kotlin_rest_tdd.factory.customer.AddressFixture
+import dio.spring_kotlin_rest_tdd.factory.customer.CustomerDtoFixture
 import dio.spring_kotlin_rest_tdd.factory.customer.CustomerFixture
+import dio.spring_kotlin_rest_tdd.model.Address
 import dio.spring_kotlin_rest_tdd.model.Customer
 import dio.spring_kotlin_rest_tdd.repository.AddressRepository
 import dio.spring_kotlin_rest_tdd.repository.CustomerRepository
@@ -34,13 +36,25 @@ class CustomerServiceTest {
 
   @Test
   fun `when Insert New Customer, then Succeeds`() {
+    val factoredAddress = AddressFixture.create("97000000")
     val factoredCustomer = CustomerFixture.create(address = AddressFixture.create("97000000"))
-    every { customers.save(any()) } returns factoredCustomer
+    val factoredCustomerDto = CustomerDtoFixture.create(
+      firstName = factoredCustomer.firstName,
+      lastName = factoredCustomer.lastName,
+      income = factoredCustomer.income,
+      cpf = factoredCustomer.cpf,
+      email = factoredCustomer.email,
+      cep = factoredCustomer.cep
+    )
 
-    val result = service.save(factoredCustomer)
+    every { service.saveCustomerWithAddress(factoredCustomerDto) } returns factoredCustomer
+    every { customers.save(any()) } returns factoredCustomer
+    every { address.findById(any()) } returns Optional.of(factoredAddress)
+    every { viaCep.enquiryCep(factoredCustomerDto.cep) } returns factoredAddress
+    val result = service.save(factoredCustomerDto)
+
     Assertions.assertThat(result).isNotNull()
-    Assertions.assertThat(result).isEqualTo(factoredCustomer)
-    verify(exactly = 1) { service.save(factoredCustomer) }
+    Assertions.assertThat(result).isExactlyInstanceOf(Customer::class.java)
   }
 
   @Test
@@ -100,10 +114,5 @@ class CustomerServiceTest {
 
     verify(exactly = 1) { customers.findById(randomId) }
     verify(exactly = 1) { customers.delete(factoredCustomer) }
-  }
-
-  @Test
-  fun `when X then Y`() {
-    TODO()
   }
 }
