@@ -37,7 +37,7 @@ class CustomerServiceTest {
   @Test
   fun `when Insert New Customer, then Succeeds`() {
     val factoredAddress = AddressFixture.create("97000000")
-    val factoredCustomer = CustomerFixture.create(address = AddressFixture.create("97000000"))
+    val factoredCustomer = CustomerFixture.create(address = factoredAddress)
     val factoredCustomerDto = CustomerDtoFixture.create(
       firstName = factoredCustomer.firstName,
       lastName = factoredCustomer.lastName,
@@ -47,7 +47,7 @@ class CustomerServiceTest {
       cep = factoredCustomer.cep
     )
 
-    every { service.saveCustomerWithAddress(factoredCustomerDto) } returns factoredCustomer
+    every { service.saveCustomerWithAddress(factoredCustomerDto) } returns factoredAddress
     every { customers.save(any()) } returns factoredCustomer
     every { address.findById(any()) } returns Optional.of(factoredAddress)
     every { viaCep.enquiryCep(factoredCustomerDto.cep) } returns factoredAddress
