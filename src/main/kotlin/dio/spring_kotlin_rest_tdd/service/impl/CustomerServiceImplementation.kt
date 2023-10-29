@@ -25,7 +25,7 @@ class CustomerServiceImplementation(
   }
 
   override fun save(customer: CustomerDto): Customer {
-    val customerData = Customer(customer, address = saveCustomerWithAddress(customer))
+    val customerData = Customer(customer, address = saveCustomerWithAddress(customer.cep))
     return repository.save(customerData)
   }
 
@@ -34,15 +34,12 @@ class CustomerServiceImplementation(
     repository.delete(customer)
   }
 
-  internal fun <T> saveCustomerWithAddress(data: T): Address {
-    return when (data) {
-      is CustomerDto -> execute(data.cep!!)
-      is CustomerUpdateDto -> execute(data.cep!!)
-      else -> throw IllegalArgumentException("Invalid CEP")
-    }
+  internal fun saveCustomerWithAddress(data: String): Address {
+    return execute(data!!)
   }
 
   private fun execute(cep: String): Address {
+    println("Banana: $cep")
     val address = addresses.findById(cep).orElseGet {
       val newAddress: Address = viaCep.enquiryCep(cep)
       addresses.save(newAddress)
@@ -53,8 +50,9 @@ class CustomerServiceImplementation(
 
   fun update(id: Long, updateData: CustomerUpdateDto): Customer {
     val original = this.findById(id)
-    val updatedData = Customer.updateEntity(updateData, original)
-    updatedData.address = saveCustomerWithAddress(updatedData.cep)
-    return repository.save(updatedData)
+    val completeData = Customer.updateEntity(updateData, original)
+    completeData.address = saveCustomerWithAddress(completeData.cep)
+    if (completeData == original) return completeData
+    return repository.save(completeData)
   }
 }

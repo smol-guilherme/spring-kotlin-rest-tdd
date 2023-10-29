@@ -35,7 +35,7 @@ class CustomerController(
   @PatchMapping
   fun upadateCustomer(
     @RequestParam(value = "customerId") id: Long,
-    @RequestBody @Valid customerData: CustomerUpdateDto
+    @RequestBody customerData: CustomerUpdateDto
   ): ResponseEntity<Customer> {
     val response = customers.update(id, customerData)
     return ResponseEntity.status(HttpStatus.OK).body(response)
