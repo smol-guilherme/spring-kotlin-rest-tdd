@@ -3,7 +3,6 @@ package dio.spring_kotlin_rest_tdd.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import dio.spring_kotlin_rest_tdd.factory.customer.AddressFixture
 import dio.spring_kotlin_rest_tdd.factory.customer.CustomerDtoFixture
-import dio.spring_kotlin_rest_tdd.model.Address
 import dio.spring_kotlin_rest_tdd.model.Customer
 import dio.spring_kotlin_rest_tdd.repository.AddressRepository
 import dio.spring_kotlin_rest_tdd.repository.CustomerRepository
@@ -110,4 +109,24 @@ class CustomerControllerTest {
       .andExpect(MockMvcResultMatchers.status().isBadRequest)
   }
 
+  @Test
+  fun `when Deleting an existing Customer, then Returns No Content`() {
+    val factoredAddress = AddressFixture.create("70150900")
+    val factoredCustomerDto = CustomerDtoFixture.create(cep = "70150900")
+    addresses.save(factoredAddress)
+    val customer = customers.save(Customer(factoredCustomerDto, factoredAddress))
+
+    mockMvc.perform(MockMvcRequestBuilders
+      .delete(URL+"/${customer.id}")
+      .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().isNoContent)
+  }
+
+  @Test
+  fun `when Deleting a nonexistent Customer, then Returns Bad Request`() {
+    mockMvc.perform(MockMvcRequestBuilders
+      .delete(URL+"/${Random.nextLong(0, 10000)}")
+      .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().isBadRequest)
+  }
 }
