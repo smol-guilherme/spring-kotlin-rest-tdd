@@ -12,9 +12,9 @@ class CustomerFixture {
       id: Long = Random.nextLong(0, 99999),
       firstName: String = "Albert",
       lastName: String = "da Silva",
-      cpf: String = "12345678935",
+      cpf: String = "20007264615",
       email: String = "${firstName.lowercase()}@email.com",
-      cep: String = "95000000",
+      cep: String = "70150900",
       income: Long = 100000,
       address: Address,
       credits: List<Credit> = mutableListOf()

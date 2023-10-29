@@ -12,7 +12,7 @@ class CustomerDtoFixture {
     fun create(
       firstName: String? = "Albert",
       lastName: String? = "da Silva",
-      cpf: String = "12345678935",
+      cpf: String = "20007264615",
       email: String = "${firstName?:"${Random(1000).toString()}".lowercase()}@email.com",
       cep: String = "70150900",
       income: Long = 100000,

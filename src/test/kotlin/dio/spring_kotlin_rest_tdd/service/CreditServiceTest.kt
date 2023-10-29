@@ -37,7 +37,7 @@ class CreditServiceTest {
 
   @Test
   fun `when Register a new Credit Option, then Returns Success`() {
-    val factoredCustomer = CustomerFixture.create(address = AddressFixture.create("97000000"))
+    val factoredCustomer = CustomerFixture.create(address = AddressFixture.create())
     val factoredCreditRequest = CreditRequestFixture.create(
       dayOfFirstInstallment = LocalDate.now().plusDays(Random.nextLong(1,90)),
       numberOfInstallments = Random.nextInt(1,48),
@@ -60,7 +60,7 @@ class CreditServiceTest {
 
   @Test
   fun `when Register a new Credit Option with too many Installments, then Throws an Exception`() {
-    val factoredCustomer = CustomerFixture.create(address = AddressFixture.create("97000000"))
+    val factoredCustomer = CustomerFixture.create(address = AddressFixture.create())
     val factoredCreditRequest = CreditRequestFixture.create(
       dayOfFirstInstallment = LocalDate.now().plusDays(Random.nextLong(1,90)),
       numberOfInstallments = Random.nextInt(49, 100),
@@ -75,7 +75,7 @@ class CreditServiceTest {
 
   @Test
   fun `when Search for a Customers Credit Options, then Returns Success`() {
-    val factoredCustomer = CustomerFixture.create(address = AddressFixture.create("97000000"))
+    val factoredCustomer = CustomerFixture.create(address = AddressFixture.create())
     val factoredCustomerCredit = CustomerCreditFixture.create(
       numberOfInstallments = Random.nextInt(1, 48),
       customerId = factoredCustomer.id!!,
@@ -104,7 +104,7 @@ class CreditServiceTest {
 
   @Test
   fun `when Search for an Invalid Customers Credit Options, then Throws an Exception`() {
-    val factoredCustomer = CustomerFixture.create(address = AddressFixture.create("97000000"))
+    val factoredCustomer = CustomerFixture.create(address = AddressFixture.create())
     val randomUUID = UUID.randomUUID()
 
     every { credit.findById(randomUUID) } returns Optional.empty()
@@ -117,7 +117,7 @@ class CreditServiceTest {
 
   @Test
   fun `when Request a List of the Customers Credit, then Returns Success`() {
-    val factoredCustomer = CustomerFixture.create(address = AddressFixture.create("97000000"))
+    val factoredCustomer = CustomerFixture.create(address = AddressFixture.create())
     val factoredList: Iterable<CreditListDto> = (1 .. Random.nextInt(3,5)).map {
       CreditListFixture.create(
         numberOfInstallments = Random.nextInt(1, 48),

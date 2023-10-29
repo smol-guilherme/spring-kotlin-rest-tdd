@@ -9,10 +9,10 @@ class CustomerUpdateFixture {
     fun create(
       firstName: String? = "",
       lastName: String? = "",
-      income: Long?,
-      cpf: String? = "",
+      income: Long? = null,
+      cpf: String? = "20007264615",
       email: String? = "",
-      cep: String? = "",
+      cep: String? = "70150900",
       address: Address? = null,
     ): CustomerUpdateDto {
       return CustomerUpdateDto(

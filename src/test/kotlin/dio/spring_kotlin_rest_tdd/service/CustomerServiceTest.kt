@@ -36,7 +36,7 @@ class CustomerServiceTest {
 
   @Test
   fun `when Insert New Customer, then Succeeds`() {
-    val factoredAddress = AddressFixture.create("97000000")
+    val factoredAddress = AddressFixture.create()
     val factoredCustomer = CustomerFixture.create(address = factoredAddress)
     val factoredCustomerDto = CustomerDtoFixture.create(
       firstName = factoredCustomer.firstName,

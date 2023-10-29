@@ -6,7 +6,7 @@ class AddressFixture {
 
   companion object {
     fun create(
-      cep: String = "",
+      cep: String = "70150900",
       streetAddress: String? = "",
       complement: String? = "",
       number: String? = "",

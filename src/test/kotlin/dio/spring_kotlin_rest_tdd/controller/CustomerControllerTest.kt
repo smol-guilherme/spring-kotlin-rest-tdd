@@ -50,7 +50,7 @@ class CustomerControllerTest {
 
   @Test
   fun `when save Customer to Database, then Returns Success`() {
-    val factoredCustomerDto = CustomerDtoFixture.create(cep = "70150900")
+    val factoredCustomerDto = CustomerDtoFixture.create()
     val stringData = mapper.writeValueAsString(factoredCustomerDto)
 
     mockMvc.perform(MockMvcRequestBuilders
@@ -61,8 +61,8 @@ class CustomerControllerTest {
 
   @Test
   fun `when save a Duplicate Customer to Database, then Returns Conflict Status Code`() {
-    val factoredAddress = AddressFixture.create("70150900")
-    val factoredCustomerDto = CustomerDtoFixture.create(cep = "70150900")
+    val factoredAddress = AddressFixture.create()
+    val factoredCustomerDto = CustomerDtoFixture.create()
     addresses.save(factoredAddress)
     customers.save(Customer(factoredCustomerDto, factoredAddress))
     val customer = Customer(factoredCustomerDto, factoredAddress)
@@ -78,7 +78,7 @@ class CustomerControllerTest {
 
   @Test
   fun `when save a Customer with Missing data, then Returns Bad Request`() {
-    val factoredCustomerDto = CustomerDtoFixture.create(cep = "70150900", firstName = "")
+    val factoredCustomerDto = CustomerDtoFixture.create(firstName = "")
     val stringData = mapper.writeValueAsString(factoredCustomerDto)
 
     mockMvc.perform(MockMvcRequestBuilders
@@ -90,8 +90,8 @@ class CustomerControllerTest {
 
   @Test
   fun `when Searching for a Customer by Id, then Returns Success`() {
-    val factoredAddress = AddressFixture.create("70150900")
-    val factoredCustomerDto = CustomerDtoFixture.create(cep = "70150900")
+    val factoredAddress = AddressFixture.create()
+    val factoredCustomerDto = CustomerDtoFixture.create()
     addresses.save(factoredAddress)
     val savedCustomer = customers.save(Customer(factoredCustomerDto, factoredAddress))
 
@@ -113,8 +113,8 @@ class CustomerControllerTest {
 
   @Test
   fun `when Deleting an existing Customer, then Returns No Content`() {
-    val factoredAddress = AddressFixture.create("70150900")
-    val factoredCustomerDto = CustomerDtoFixture.create(cep = "70150900")
+    val factoredAddress = AddressFixture.create()
+    val factoredCustomerDto = CustomerDtoFixture.create()
     addresses.save(factoredAddress)
     val customer = customers.save(Customer(factoredCustomerDto, factoredAddress))
 
@@ -155,5 +155,43 @@ class CustomerControllerTest {
       .andExpect(MockMvcResultMatchers.jsonPath("$.income").value("${factoredUpdateData.income}"))
       .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("${savedCustomer.cpf}"))
       .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("${savedCustomer.email}"))
+  }
+
+  @Test
+  fun `when Updating an existing Customer with No Changes, then Returns Success`() {
+    val factoredAddress = AddressFixture.create("70150900")
+    val factoredCustomerDto = CustomerDtoFixture.create(cep = "70150900")
+    addresses.save(factoredAddress)
+    val savedCustomer = customers.save(Customer(factoredCustomerDto, factoredAddress))
+    val factoredUpdateData = CustomerUpdateFixture.create(
+      firstName = "",
+      lastName = "",
+      address = savedCustomer.address
+    )
+    val stringData = mapper.writeValueAsString(factoredUpdateData)
+
+    mockMvc.perform(MockMvcRequestBuilders
+      .patch(URL+"?customerId=${savedCustomer.id!!}")
+      .contentType(MediaType.APPLICATION_JSON)
+      .content(stringData))
+      .andExpect(MockMvcResultMatchers.status().isOk)
+  }
+
+  @Test
+  fun `when Updating a nonexistent Customer, then Returns Bad Request`() {
+    val factoredAddress = AddressFixture.create()
+    val address = addresses.save(factoredAddress)
+    val factoredUpdateData = CustomerUpdateFixture.create(
+      firstName = "Jonas",
+      lastName = "Tales",
+      address = address
+    )
+    val stringData = mapper.writeValueAsString(factoredUpdateData)
+
+    mockMvc.perform(MockMvcRequestBuilders
+      .patch(URL+"?customerId=${Random.nextLong(0,1000)}")
+      .contentType(MediaType.APPLICATION_JSON)
+      .content(stringData))
+      .andExpect(MockMvcResultMatchers.status().isBadRequest)
   }
 }
