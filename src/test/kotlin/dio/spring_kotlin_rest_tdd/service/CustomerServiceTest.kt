@@ -47,7 +47,7 @@ class CustomerServiceTest {
       cep = factoredCustomer.cep
     )
 
-    every { service.saveCustomerWithAddress(factoredCustomerDto) } returns factoredAddress
+    every { service.saveCustomerWithAddress(factoredCustomerDto.cep) } returns factoredAddress
     every { customers.save(any()) } returns factoredCustomer
     every { address.findById(any()) } returns Optional.of(factoredAddress)
     every { viaCep.enquiryCep(factoredCustomerDto.cep) } returns factoredAddress

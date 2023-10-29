@@ -1,8 +1,10 @@
 package dio.spring_kotlin_rest_tdd.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import dio.spring_kotlin_rest_tdd.dto.request.CustomerUpdateDto
 import dio.spring_kotlin_rest_tdd.factory.customer.AddressFixture
 import dio.spring_kotlin_rest_tdd.factory.customer.CustomerDtoFixture
+import dio.spring_kotlin_rest_tdd.factory.customer.CustomerUpdateFixture
 import dio.spring_kotlin_rest_tdd.model.Customer
 import dio.spring_kotlin_rest_tdd.repository.AddressRepository
 import dio.spring_kotlin_rest_tdd.repository.CustomerRepository
@@ -128,5 +130,30 @@ class CustomerControllerTest {
       .delete(URL+"/${Random.nextLong(0, 10000)}")
       .contentType(MediaType.APPLICATION_JSON))
       .andExpect(MockMvcResultMatchers.status().isBadRequest)
+  }
+
+  @Test
+  fun `when Updating an existing Customer, then Returns Success`() {
+    val factoredAddress = AddressFixture.create("70150900")
+    val factoredCustomerDto = CustomerDtoFixture.create(cep = "70150900")
+    addresses.save(factoredAddress)
+    val savedCustomer = customers.save(Customer(factoredCustomerDto, factoredAddress))
+    val factoredUpdateData = CustomerUpdateFixture.create(
+      firstName = "Jonas",
+      income = 12000L,
+      address = savedCustomer.address
+    )
+    val stringData = mapper.writeValueAsString(factoredUpdateData)
+
+    mockMvc.perform(MockMvcRequestBuilders
+      .patch(URL+"?customerId=${savedCustomer.id!!}")
+      .contentType(MediaType.APPLICATION_JSON)
+      .content(stringData))
+      .andExpect(MockMvcResultMatchers.status().isOk)
+      .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("${factoredUpdateData.firstName}"))
+      .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("${savedCustomer.lastName}"))
+      .andExpect(MockMvcResultMatchers.jsonPath("$.income").value("${factoredUpdateData.income}"))
+      .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("${savedCustomer.cpf}"))
+      .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("${savedCustomer.email}"))
   }
 }
