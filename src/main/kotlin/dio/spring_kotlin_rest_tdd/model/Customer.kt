@@ -9,12 +9,12 @@ import jakarta.validation.constraints.Email
 data class Customer(
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column val id: Long? = null,
-  @Column var firstName: String,
-  @Column var lastName: String,
-  @Column var income: Long = 100000,
-  @Column val cpf: String,
-  @Column var email: String,
-  @Column var cep: String,
+  @Column(nullable = false) var firstName: String,
+  @Column(nullable = false) var lastName: String,
+  @Column(nullable = false) var income: Long = 100000,
+  @Column(unique = true, nullable = false) val cpf: String,
+  @Column(unique = true, nullable = false) var email: String,
+  @Column(nullable = false) var cep: String,
   @ManyToOne
   var address: Address?,
   @OneToMany(
