@@ -19,6 +19,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import kotlin.random.Random
 
 
 @SpringBootTest
@@ -86,8 +87,27 @@ class CustomerControllerTest {
       .andExpect(MockMvcResultMatchers.status().isBadRequest)
   }
 
-//  @Test
-//  fun ``
+  @Test
+  fun `when Searching for a Customer by Id, then Returns Success`() {
+    val factoredAddress = AddressFixture.create("70150900")
+    val factoredCustomerDto = CustomerDtoFixture.create(cep = "70150900")
+    addresses.save(factoredAddress)
+    val savedCustomer = customers.save(Customer(factoredCustomerDto, factoredAddress))
 
+    mockMvc.perform(MockMvcRequestBuilders
+      .get(URL+"/${savedCustomer.id}")
+      .accept(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().isOk)
+      .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("${savedCustomer.cpf}"))
+      .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("${savedCustomer.email}"))
+  }
+
+  @Test
+  fun `when Searching for a Customer by an Invalid Id, then Returns Bad Request`() {
+    mockMvc.perform(MockMvcRequestBuilders
+      .get(URL+"/${Random.nextLong(0, 10000)}")
+      .accept(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().isBadRequest)
+  }
 
 }
