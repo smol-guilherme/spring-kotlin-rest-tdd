@@ -15,11 +15,11 @@ import java.time.LocalDateTime
 class ExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handlerValidException(ex: MethodArgumentNotValidException): ResponseEntity<ExceptionDetails> {
-      val erros: MutableMap<String, String?> = HashMap()
-      ex.bindingResult.allErrors.stream().forEach { erro: ObjectError ->
-        val fieldName: String = (erro as FieldError).field
-        val messageError: String? = erro.defaultMessage
-        erros[fieldName] = messageError
+      val errors: MutableMap<String, String?> = HashMap()
+      ex.bindingResult.allErrors.stream().forEach { error: ObjectError ->
+        val fieldName: String = (error as FieldError).field
+        val messageError: String? = error.defaultMessage
+        errors[fieldName] = messageError
       }
       return ResponseEntity(
         ExceptionDetails(
@@ -27,7 +27,7 @@ class ExceptionHandler {
           timestamp = LocalDateTime.now(),
           status = HttpStatus.BAD_REQUEST.value(),
           exception = ex.javaClass.toString(),
-          details = erros
+          details = errors
         ), HttpStatus.BAD_REQUEST
       )
     }

@@ -8,6 +8,7 @@ import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -36,8 +37,8 @@ class CreditController(
     @RequestParam(value = "customerId") customerId: Long,
     @PathVariable creditCode: UUID
   ): ResponseEntity<CustomerCreditDto> {
-    // mudar esse throw
-    val response = credits.listOne(creditCode, customerId).orElseThrow { IllegalArgumentException() }
+    val response = credits.listOne(creditCode, customerId)
+      .orElseThrow { IllegalArgumentException("No Credit found for id $customerId with code $creditCode") }
     return ResponseEntity.status(HttpStatus.OK).body(response)
   }
 
