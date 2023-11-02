@@ -1,7 +1,6 @@
 package dio.spring_kotlin_rest_tdd.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import dio.spring_kotlin_rest_tdd.dto.request.CustomerUpdateDto
 import dio.spring_kotlin_rest_tdd.factory.customer.AddressFixture
 import dio.spring_kotlin_rest_tdd.factory.customer.CustomerDtoFixture
 import dio.spring_kotlin_rest_tdd.factory.customer.CustomerUpdateFixture
@@ -28,10 +27,14 @@ import kotlin.random.Random
 @AutoConfigureMockMvc
 @ContextConfiguration
 class CustomerControllerTest {
-  @Autowired private lateinit var customers: CustomerRepository
-  @Autowired private lateinit var addresses: AddressRepository
-  @Autowired private lateinit var mockMvc: MockMvc
-  @Autowired private lateinit var mapper: ObjectMapper
+  @Autowired
+  private lateinit var customers: CustomerRepository
+  @Autowired
+  private lateinit var addresses: AddressRepository
+  @Autowired
+  private lateinit var mockMvc: MockMvc
+  @Autowired
+  private lateinit var mapper: ObjectMapper
 
   companion object {
     const val URL: String = "/api/customers"
