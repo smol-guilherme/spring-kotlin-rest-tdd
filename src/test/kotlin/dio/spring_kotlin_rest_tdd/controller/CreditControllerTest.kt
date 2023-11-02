@@ -2,12 +2,17 @@ package dio.spring_kotlin_rest_tdd.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import dio.spring_kotlin_rest_tdd.dto.CreditDto
+import dio.spring_kotlin_rest_tdd.dto.response.CreditListDto
+import dio.spring_kotlin_rest_tdd.dto.response.CustomerCreditDto
 import dio.spring_kotlin_rest_tdd.factory.credit.CreditDtoFixture
+import dio.spring_kotlin_rest_tdd.factory.credit.CreditFixture
 import dio.spring_kotlin_rest_tdd.factory.customer.AddressFixture
 import dio.spring_kotlin_rest_tdd.factory.customer.CustomerFixture
+import dio.spring_kotlin_rest_tdd.model.Credit
 import dio.spring_kotlin_rest_tdd.repository.AddressRepository
 import dio.spring_kotlin_rest_tdd.repository.CreditRepository
 import dio.spring_kotlin_rest_tdd.repository.CustomerRepository
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -20,6 +25,8 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import java.util.Optional
+import kotlin.random.Random
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -86,7 +93,39 @@ class CreditControllerTest {
         .content(stringData)).andExpect(MockMvcResultMatchers.status().isBadRequest)
   }
 
+  @Test
+  fun `when Search for All Credits of a Customer, then Returns Success`() {
+    val address = AddressFixture.create()
+    addresses.save(address)
+    val factoredCustomer = CustomerFixture.create(address = address)
+    val savedCustomer = customers.save(factoredCustomer)
+    val listOfCredits = mutableListOf<Optional<Credit>>()
+    val size = Random.nextInt(2,5)
+    for (i in 1..size) {
+      var entry = credits.save(CreditFixture.create(customer = factoredCustomer))
+      listOfCredits.add(credits.findById(entry.id!!))
+    }
 
+    mockMvc.perform(MockMvcRequestBuilders
+      .get(URL +"?customerId=${savedCustomer.id}")
+      .accept(MediaType.APPLICATION_JSON))
+      .andExpect(MockMvcResultMatchers.status().isOk)
+      .andExpect(MockMvcResultMatchers.jsonPath("$[0].creditValue").value(listOfCredits[0].orElse(null).creditValue))
+      .andExpect(MockMvcResultMatchers.jsonPath("$[0].numberOfInstallments").value(listOfCredits[0].orElse(null).numberOfInstallments))
+      .andExpect(MockMvcResultMatchers.jsonPath("$[${size-1}].creditValue").value(listOfCredits[size-1].orElse(null).creditValue))
+      .andExpect(MockMvcResultMatchers.jsonPath("$[${size-1}].numberOfInstallments").value(listOfCredits[size-1].orElse(null).numberOfInstallments))
+  }
+
+  @Test
+  fun `when Search for All Credits of an Invalid Customer, then Returns Bad Request`() {
+    val randomId = Random.nextLong(0, 10000)
+
+    mockMvc.perform(
+      MockMvcRequestBuilders
+        .get(URL +"?customerId=${randomId}")
+        .accept(MediaType.APPLICATION_JSON))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest)
+  }
 
   @Test
   fun `when X, then Y`() {
